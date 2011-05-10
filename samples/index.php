@@ -2,6 +2,7 @@
 
 require_once '../MeCab.php';
 
+$type = 0;
 $text = "やつを追う前に言っておくッ！
 おれは今やつのスタンドをほんのちょっぴりだが体験した。
 い…いや…体験したというよりはまったく理解を超えていたのだが……。
@@ -13,28 +14,18 @@ $text = "やつを追う前に言っておくッ！
 催眠術だとか超スピードだとか、そんなチャチなもんじゃあ断じてねえ。
 もっと恐ろしいものの片鱗を味わったぜ…。";
 
-$type = 0;
-
 if (isset($_POST['text'])) {
-	// ご使用のmecabが採用している文字コードを指定して下さい。
-	// 指定しない場合は、デフォルトでUTF-8がセットされます。
-	MeCab::setEncode('UTF-8');
-	
-	// MeCabクラスを使用する前に、tmpディレクトリに書き込み権限があるかどうかを確認して下さい。
-	$mecab = new MeCab();
-	
 	if ($_POST['type'] == 0) {
 		// 引数として渡された文字列を、形態素解析します。
-		$analyzed = $mecab->analyze($_POST['text']);
+		$analyzed = MeCab::analyze(str_replace(array("\r\n","\r","\n"), '', $_POST['text']));
 	} else {
 		// 引数として渡された文字列を分かち書きに直します。
-		$splited = $mecab->split($_POST['text']);
+		$splited = MeCab::split($_POST['text']);
 	}
 	
 	$text = $_POST['text'];
 	$type = $_POST['type'];
 }
-
 
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 	"http://www.w3.org/TR/html4/strict.dtd">
@@ -56,6 +47,18 @@ if (isset($_POST['text'])) {
 
 <?php if (isset($analyzed)): ?>
 	<table border="1" cellspacing="2" cellpadding="2">
+		<tr>
+			<th>表層形</th>
+			<th>品詞</th>
+			<th>品詞細分類1</th>
+			<th>品詞細分類2</th>
+			<th>品詞細分類3</th>
+			<th>活用形</th>
+			<th>活用型</th>
+			<th>原形</th>
+			<th>読み</th>
+			<th>発音</th>
+		</tr>
 <?php foreach ($analyzed as $word): ?>
 		<tr>
 <?php foreach ($word as $value): ?>
